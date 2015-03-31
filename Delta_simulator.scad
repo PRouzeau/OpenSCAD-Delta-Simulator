@@ -6,7 +6,7 @@
 
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. 
 // Unfortunately the new OpenScad version 2015.03 have a lot of flickering during animation. Hope this will be solved in further versions. 
-// Licence GPL V3.0 - Pierre ROUZEAU aka PRZ - Version 0.1 - 30 march 2015
+// Licence GPL V3.0 - Pierre ROUZEAU aka PRZ - Version 0.2 - 31 march 2015
 
 //dimensions in mm.
 //-- Frame data ----------------------------------------------
@@ -34,7 +34,7 @@ delta_angle = 62; //key travel design: arm angle/horizontal for centered effecto
 // Note that over 62°, the arm may go over vertical, and the simulator is a bit lost with that
 //Reachable area is a rounded triangular shape, with the ends pointed on columns, hence the real limitation of travel is dictated by the clearance on columns. You have the option to define a rough belt simulation, which will show the conflicts - see below.
 
-//arm_length = 270; // Alternatively, you could define the arm length, which will supersedes the design angle - If too long, you will have problem with the animation (reachable area too large drive to overpass vertical for the arms).
+arm_length = 0; // Alternatively, you could define the arm length, which will supersedes the design angle - If too long, you will have problem with the animation (reachable area too large drive to overpass vertical for the arms). Set to 0 give priority to the angle.
  
 mini_angle = 20; //minimum angle/horizontal. 20° is generally considered as the practical limit. That will not modify the design, only give you an approximate information  about the maximum possible range. The range is not really circular, but will be considered so for practical reasons. You could go below 20°, but there is no real point, because when the other arms are nearing vertical, the effector bang the columns. Also, it drive to dynamic problems (a small effector move need a large carriage move), extra loads and effector loss of stability.
 
@@ -47,7 +47,7 @@ struct_color = "red";
 moving_color = "deepskyblue";
 $fn=24; // smooth the cylinders
 
-//belt_dist=25; //distance between the belt and the internal of the column. (at the contact point with effector). if this data is defined, rough belt approximation will be shown, for conflict evaluation.
+belt_dist=0; //distance between the belt and the internal of the column. (belt face at the contact point with effector). if this data is different from 0, rough belt approximation will be shown, for conflict evaluation.
 
 //arm length is given axis to axis.
 
@@ -57,7 +57,7 @@ $fn=24; // smooth the cylinders
 //ye=50;  // impose hotend y coordinate
 //ze=0; // impose hotend z coordinate, ze default to 0 if xe AND ye are defined
 
-//Alternatively, you could give the position in polar coordinates
+//Alternatively, you could impose the position in polar coordinates
 /*
 e_radius=85;
 e_angle=0;
@@ -66,6 +66,9 @@ xe=e_radius*cos(e_angle);
 ye=e_radius*sin(e_angle);   //*/
 
 // if you ask for an unreachable point, arms and effector will not be displayed, without warning.
+
+// Displayed angles are those of the arms attached to the back column
+// Note that for long arms, the side angles you can see are not acceptable for rod ends type 'traxxas', 'Igus' or equivalent and are a very limiting factor for the reachable area.
 
 //Next parameters defines camera position at preview- comment these parameters if you want to make an animation with another position.
 $vpd=2000; // camera distance: work only if set outside a module
@@ -94,6 +97,11 @@ working_height_cent = travel_stop-carVtPos; // considering the carriage able to 
 rdiff = beam_int_radius-car_hor_offset-working_dia/2; // horiz dist between top and bottom articulations while at maximum radius (arms nearing vertical)
 ht_side = sqrt (ar_length*ar_length-rdiff*rdiff); //Carriage height while at working radius
 working_height_min = travel_stop-(effVtPos +(ht_side+car_vert_dist+eff_vert_dist));
+//--- Text display ------------------------------------------
+txtsize = beam_int_radius/17;
+txtypos = 1.1*beam_int_radius;
+txtzpos = 2*beam_int_radius;
+txtangle= -80;
 
 //====================================================================
 
@@ -123,7 +131,7 @@ module view () {//if no xe,ye,ze, viewing trajectory and other stuff as a functi
     a_radius= ($t<0.5)?r1:($t<0.6)?r2:($t<0.7)?r3:($t<0.85)?r4:r5; // select sequence value
     a_height= ($t<0.5)?h1:($t<0.6)?h2:($t<0.7)?h3:($t<0.85)?h4:h5;
     simul (a_radius*cos(anim_angle),a_radius*sin(anim_angle),a_height);//simulate position (x,y,z) 
-    disp_text(-80,0,1.1*beam_int_radius,2*beam_int_radius); // to display printer data on a panel aside the printer 
+    disp_text(txtangle,0,txtypos,txtzpos); // to display printer data on a panel aside the printer 
   } 
 }
 
@@ -151,10 +159,17 @@ module delta_cal (x, y, z, rot) { // calculation of arms angles and display
   drd_plane = sqrt(pow(radius_cent-yc,2)+xc*xc);
   z_angle = asin(xc/drd_plane);
   h_angle = asin(drd_plane/ar_length);
-  echo(h_angle = h_angle); // just for info of what is the angle you reach
   vpos_car = cos(h_angle)*ar_length-ht_cent; 
   rot (0,0,30) 
     disp_armcar(x,y,z,-rot,-h_angle,z_angle,vpos_car);
+  
+  if (rot==0) { // display angles
+    txta = str("Angles: vertical: ",round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
+    rot (0,-10,txtangle) 
+      tsl (0, txtypos,txtzpos-txtsize*19)
+         rot (90,0,90) color("black")
+           textz(txta, txtsize*0.85, 2, false);
+  }
 }
 
 module disp_effector(x, y, z){
@@ -235,7 +250,6 @@ diamext = 2*beam_int_radius +3*extrusion;
 
 
 module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
-  txtsize = beam_int_radius/17;
   vtext = [
     "  3D Printer Simulator", 
     "",
@@ -249,6 +263,7 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     str("For bed/ceiling: ",round(travel_stop-hbase-bed_level)," mm"),
     str("-Centre working height: ",round(working_height_cent)," mm"),
     str("-Min. working height:    ",round(working_height_min)," mm"),
+    "",
     "",
     "License: GPL V3.0 - Author: PRZ"
   ];
