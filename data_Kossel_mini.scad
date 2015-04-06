@@ -1,7 +1,4 @@
-// Data Set for a "Tube" micro Delta printer
-// The mini angle is set at 20°, using the maximum vertical travel and allowing the maximum working diameter, which impose a circular housing to clear the effector
-// with 20° minimum, design angle of  62° is the maximum, with arms going vertical while the effector is aside columns
-// Due to this vertical arm position, care shall be taken that the arms clear the rail and carriage offset shall be increased accordingly.
+// Data Set for Kossel mini Delta printer - PRZ  april, 6, 2015
 
 housing_base=0; 
 housing_opening = 200; // defines height of the opening in the housing
@@ -35,6 +32,7 @@ railwidth =12;
 rail_base=150;
 frame_corner_radius=36; 
 corner_offset=-14;
+frame_face_radius= 0;
 
 belt_dist=25;
 spool_diam = 175;  

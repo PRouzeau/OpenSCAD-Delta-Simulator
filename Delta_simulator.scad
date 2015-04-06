@@ -6,7 +6,7 @@
 
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. 
 // Unfortunately the new OpenScad version 2015.03 have a lot of flickering during animation. Hope this will be solved in further versions. 
-// Licence GPL V3.0 - Pierre ROUZEAU aka PRZ - Version 0.4 - 06 april 2015
+// Licence GPL V3.0 - Pierre ROUZEAU aka PRZ - Version 0.4.1 - 07 april 2015
 
 //dimensions in mm.
 //-- Frame data ----------------------------------------------
@@ -35,9 +35,8 @@ eff_vert_dist = 12; //Vertical distance between the bottom of effector and the a
 arm_space=50; // space between the arms
 top_clearance=5; // clearance between top of the carriage and top structure
 delta_angle = 62; //key travel design: arm angle/horizontal for centered effector.
-//Will only define the arm length and travels. Does not modify parts. 57~62°
-//62° gives slightly longer arms and a near maximum practical usable space with vertical arms while nearing columns. For a 3D printer, great care shall be done while installing fans which could easily conflict with columns. fan shall be installed 60° from the column and protrude on flat side.
-// Note that over 62°, the arm may go over vertical, and the simulator is a bit lost with that
+//Will only define the arm length and travels. Does not modify parts. 57~63°
+//62° gives slightly longer arms and a near maximum practical usable space with vertical arms while nearing columns (if the iminimum angle is 20°). For a 3D printer, great care shall be done while installing fans which could easily conflict with columns. fan shall be installed 60° from the column and protrude on flat side.
 //Reachable area is a rounded triangular shape, with the ends pointed on columns, hence the real limitation of travel is dictated by the clearance on columns. You have the option to define a rough belt simulation, which will show the conflicts - see below.
 
 arm_length = 0; // Alternatively, you could define the arm length, which will supersedes the design angle - If too long, you will have problem with the animation (reachable area too large drive to overpass vertical for the arms). Set to 0 give priority to the angle. arm length is given axis to axis. 
@@ -48,13 +47,12 @@ hotend_vert_dist = 20;//vertical distance between hotend nozzle and effector bot
 
 //Frame details
 frame_corner_radius=1.5*extrusion; //modify corner shape radius.
-frame_face_radius=0; // radius of the face. Shall be >> overall radius. 0 is flat
-// having a rounded face slow the initial display - Animation remained unaffected
+frame_face_radius=280; // radius of the face. Shall be >> overall radius. 0 is flat
 corner_offset = -3; //offset center of the corner sector / beam internal radius
 housing_base = 0; // if = 0 no housing shown - usually set to hbase
 housing_opening = 300;
 belt_dist=0; //distance between the belt and the internal of the column. (belt face at the contact point with effector). if this data is different from 0, rough belt approximation will be shown, for conflict evaluation.
-spool_diam = 200; // if spool_diameter > 0, spool shown on top, vertical axis
+spool_diam = 200; // if spool_diameter > 0, spool shown on top - vertical axis
 spool_thk  = 70;
 
 //-- Miscellaneous stuff - no influence on movement ---------------------------------
@@ -68,9 +66,10 @@ $vpt=[152,-90,434]; //camera translation  */
 //== data set included below will supersedes above data ===============================
 //-- Uncomment the data set you want to see -------------------------------------------
 //include <data_Kossel_mini.scad> //-- Data set for delta 'Kossel mini'
+//include <data_Rostock_Max.scad> //-- Data set for delta 'Rostock Max'
 //include <data_Tiko.scad> //-- Data set for micro delta 'Tiko', w/ camera translation
 //housing_opening=0; //uncomment this line to close the Tiko housing
-//include <data_micro_tube.scad> // micro delta in a circular housing - slow display
+//include <data_micro_tube.scad> // micro delta in a circular housing
 //=====================================================================================
 
 $fn=24; // smooth the cylinders
@@ -121,8 +120,8 @@ ht_side = sqrt (ar_length*ar_length-rdiff*rdiff); //Carriage height while at wor
 working_height_min = travel_stop-(effVtPos +(ht_side+car_vert_dist+eff_vert_dist));
 //--- Text display ------------------------------------------
 txtsize = beam_int_radius/16;
-txtypos = 1.1*beam_int_radius;
-txtzpos = 2*beam_int_radius;
+txtypos = 1.15*beam_int_radius;
+txtzpos = 2.2*beam_int_radius;
 txtangle= -80;
 
 //====================================================================
@@ -182,14 +181,14 @@ module delta_cal (x, y, z, rot) { // calculation of arms angles and display
   xc = rad*cos(angt+rot); //for arm and carriage rotation
   yc = rad*sin(angt+rot);
   drd_plane = sqrt(pow(radius_cent-yc,2)+xc*xc);
-  z_angle = asin(xc/drd_plane);
-  h_angle = asin(drd_plane/ar_length);
+  angsign = ((radius_cent-yc)<0)?-1:1;
+  z_angle = angsign*asin(xc/drd_plane); // angle around z axis
+  h_angle = angsign*asin(drd_plane/ar_length);
   vpos_car = cos(h_angle)*ar_length-ht_cent; 
   rotz (30) 
     disp_armcar(x,y,z,-rot,-h_angle,z_angle,vpos_car);
-  
   if (rot==0) { // display angles
-    txta = str("Angles: vertical: ",round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
+    txta = str("Angles: vertical: ",90-round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
     rot (0,-10,txtangle) 
       tsl (0, txtypos,txtzpos-txtsize*20)
          rot (90,0,90) color("black")
@@ -276,7 +275,7 @@ dec_housing = (beam_int_radius+3+extrusion)/2 + max(extrusion, railwidth)/2;
     if (housing_base) // show an housing
       difference () {
         rounded_triangle (corner_radius,frame_face_radius, int_radius,htotal-housing_base, housing_base); 
-        rounded_triangle (corner_radius-2,frame_face_radius,int_radius,htotal-housing_base+2,housing_base-1); 
+        rounded_triangle (corner_radius-2,frame_face_radius-2,int_radius,htotal-housing_base+2,housing_base-1); 
         rotz (180) // cut the opening
           hull() {
             cylx(-20,1000,0,dec_housing+10,hbase+10);   
@@ -416,12 +415,15 @@ cosint = int_radius*cos(30);
 face_offset = sqrt(fr*fr-cosint*cosint)-int_radius*0.5; 
 ang_face = asin (cosint/fr);    
   hull() 
-    rot120(-30) {
+    rot120(-30) 
       cylz(corner_radius*2,h,int_radius,0,hpos,80);
-      if (ang_face) // just to remove warning
-        tsl (face_offset,0,hpos)
+  if (ang_face && face_offset) // just to remove warning
+    rot120(-30) // not included in the 'hull()' for performance reasons
+      tsl (face_offset,0,hpos) 
+        difference() {
           sector (face_radius*2,h,ang_face);
-    }  
+          cubez(face_radius*2,face_radius*2,h+2,face_radius-face_offset,0,-1);
+        }  
 }
 
 //-- Miscellaneous -----------------------------------

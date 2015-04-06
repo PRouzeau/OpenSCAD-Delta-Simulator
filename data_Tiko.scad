@@ -28,6 +28,7 @@ dia_arm = 5;
 railthk =8; railwidth =20; rail_base=127;
 frame_corner_radius=60; 
 corner_offset=-57;
+frame_face_radius= 0;
 
 belt_dist=0;
 spool_diam = 175;  spool_thk = -60;  

@@ -34,6 +34,7 @@ railwidth =20;
 rail_base=80;
 frame_corner_radius=118.5; 
 corner_offset=-beam_int_radius;
+frame_face_radius= 0;
 
 belt_dist=0;
 spool_diam = 175;  
