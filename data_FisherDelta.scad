@@ -45,8 +45,8 @@ moving_color = "green";
 bed_color = "silver";
 
 $vpd=camPos?1500:$vpd;   // camera distance: work only if set outside a module
-$vpr=camPos?[67,0,29]:$vpr;   // camera rotation
-$vpt=camPos?[152,-90,320]:$vpt; //camera translation  */
+$vpr=camPos?[80,0,42]:$vpr;   // camera rotation
+$vpt=camPos?[190,-67,290]:$vpt; //camera translation  */
 
 
 //*

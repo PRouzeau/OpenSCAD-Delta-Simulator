@@ -39,5 +39,5 @@ spool_diam = 175;
 spool_thk = 60;   
 
 $vpd=camPos?1750:$vpd;   // camera distance: work only if set outside a module
-$vpr=camPos?[67,0,29]:$vpr;   // camera rotation
+$vpr=camPos?[80,0,42]:$vpr;   // camera rotation
 $vpt=camPos?[152,-90,400]:$vpt; //camera translation  */

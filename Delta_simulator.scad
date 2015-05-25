@@ -11,7 +11,6 @@
 
 // comment out below variable if you want to do a closeup view during animation
 camPos = true; //if true force camera position according request in dataset
-
 //dimensions in mm.
 Delta_name = "Simulator example";
 //-- Frame data ----------------------------------------------
@@ -68,9 +67,9 @@ struct_color = "red";
 moving_color = "deepskyblue";
 bed_color = [0.5,0.5,0.5,0.5];
 
-$vpd=camPos?2000:undef;      // camera distance: work only if set outside a module
-$vpr=camPos?[67,0,29]:undef; // camera rotation
-$vpt=camPos?[152,-90,434]:undef; //camera translation  */
+$vpd=camPos?2070:undef;      // camera distance: work only if set outside a module
+$vpr=camPos?[80,0,42]:undef; // camera rotation
+$vpt=camPos?[220,-90,420]:undef; //camera translation  */
 
 //== data set included below will supersedes above data ===============================
 //-- Uncomment the data set you want to see, else it defaults on an example -------------------------------------------
@@ -108,7 +107,7 @@ ye=e_radius*sin(e_angle);   //*/
 
 //Last parameters defines camera position at preview- comment these parameters if you want to make an animation with another position.
 
-//echo_camera();
+echo_camera();
 
 //====================================================================
 view();  //The animation will run around a cylinder based on the maximum reachable radius at the middle of the columns. If arms are sufficiently long, it will bang on columns, belts, etc.
@@ -134,7 +133,7 @@ working_height_min = travel_stop-(effVtPos +(ht_side+car_vert_dist+eff_vert_dist
 txtsize = beam_int_radius/16;
 txtypos = 1.15*beam_int_radius;
 txtzpos = 2.2*beam_int_radius;
-txtangle= -80;
+txtangle= -50;
 
 //====================================================================
 
@@ -151,8 +150,8 @@ module view () {//if no fixed xe,ye,ze, viewing trajectory and other stuff as a 
     hws= working_height_cent; 
   
     anim_angle=$t*720-150; // two rotations for $t 0->1 //-150 to start on left column 
-    r1= working_dia/2; //$t 0 to 0.1
-    r2= (0.2-$t)*10*working_dia/2; //$t 0.1 to 0.2
+    r1= working_dia/2; //$t 0 to 0.15
+    r2= (0.2-$t)*20*working_dia/2; //$t 0.15 to 0.2
     r3= 0; // $t 0.2 to 0.35
     r4= ($t-0.35)*6.67*working_dia/2; //$t 0.35 to 0.5
     r5= working_dia/2; //$t 0.5 to 1 helix down
@@ -163,8 +162,8 @@ module view () {//if no fixed xe,ye,ze, viewing trajectory and other stuff as a 
     h4= hws-($t-0.35)*6.67*(hws-hwm);
     h5= (1-$t)*2*hwm;  // hwm is max vertical travel at periphery
     
-    a_radius= ($t<0.1)?r1:($t<0.2)?r2:($t<0.35)?r3:($t<0.5)?r4:r5;//select sequence value
-    a_height= ($t<0.1)?h1:($t<0.2)?h2:($t<0.35)?h3:($t<0.5)?h4:h5;
+    a_radius= ($t<0.15)?r1:($t<0.2)?r2:($t<0.35)?r3:($t<0.5)?r4:r5;//select sequence value
+    a_height= ($t<0.15)?h1:($t<0.2)?h2:($t<0.35)?h3:($t<0.5)?h4:h5;
     
     simul (a_radius*cos(anim_angle),a_radius*sin(anim_angle),a_height);//simulate position (x,y,z) 
     disp_text(txtangle,0,txtypos,txtzpos); // display printer data on a panel aside the printer 
