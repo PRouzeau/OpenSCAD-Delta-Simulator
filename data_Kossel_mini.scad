@@ -1,5 +1,5 @@
 // Data Set for Kossel mini Delta printer - PRZ  april, 6, 2015
-
+Delta_name = "Kossel by JC Rocholl";
 housing_base=0; 
 housing_opening = 200; // defines height of the opening in the housing
 beam_int_radius = 144; // radius inside the columns - used as reference radius
@@ -8,7 +8,7 @@ htop = 15;  // height of top structure
 htotal= 600; // total height, including base and top structure
 
 bed_level = 5; 
-extrusion = 15; // no extrusion
+extrusion = 15; // 
 
 car_hor_offset= 19.5; 
 hcar = 40; 
@@ -38,6 +38,6 @@ belt_dist=25;
 spool_diam = 175;  
 spool_thk = 60;   
 
-$vpd=1750; // camera distance: work only if set outside a module
-//$vpr=[67,0,29];   // camera rotation
-$vpt=[152,-90,400]; //camera translation  */
+$vpd=camPos?1750:$vpd;   // camera distance: work only if set outside a module
+$vpr=camPos?[67,0,29]:$vpr;   // camera rotation
+$vpt=camPos?[152,-90,400]:$vpt; //camera translation  */

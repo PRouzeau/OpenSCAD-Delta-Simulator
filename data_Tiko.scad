@@ -1,5 +1,5 @@
-// Data Set for Tiko Delta printer
-
+// Data Set for Tiko Delta printer - get from published photos and data
+Delta_name = "Tiko by Tiko3D"; // 6 April 2015
 housing_base=125; //uncomment this line to show the housing
 housing_opening = 350;
 beam_int_radius = 115.5; // radius inside the columns - used as reference radius
@@ -33,5 +33,7 @@ frame_face_radius= 0;
 belt_dist=0;
 spool_diam = 175;  spool_thk = -60;  
 
-$vpd=1400; // camera distance
-$vpt=[152,-90,300]; //camera translation  */
+if (camPos) {
+  $vpd=1400; // camera distance
+  $vpt=[152,-90,300]; //camera translation  */
+}  

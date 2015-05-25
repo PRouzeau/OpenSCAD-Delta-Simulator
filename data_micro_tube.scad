@@ -1,8 +1,8 @@
-// Data Set for a "Tube" micro Delta printer
+// Data Set for a "Tube" micro Delta printer - 7 April 2015
 // The mini angle is set at 20°, using the maximum vertical travel and allowing the maximum working diameter, which impose a circular housing to clear the effector
 // with 20° minimum, design angle of  62° is the maximum, with arms going vertical while the effector is aside columns
 // Due to this vertical arm position, care shall be taken that the arms clear the rail and carriage offset shall be increased accordingly.
-
+Delta_name = "Delta tube micro by PRZ";
 housing_base=1; 
 housing_opening = 200; // defines height of the opening in the housing
 beam_int_radius = 116; // radius inside the columns - used as reference radius
@@ -40,6 +40,8 @@ belt_dist=0;
 spool_diam = 175;  
 spool_thk = -60;   
 
-$vpd=1400; // camera distance: work only if set outside a module
-//$vpr=[67,0,29];   // camera rotation
-$vpt=[152,-90,300]; //camera translation  */
+if (camPos) {
+  $vpd=1400; // camera distance: work only if set outside a module
+  //$vpr=[67,0,29];   // camera rotation
+  $vpt=[152,-90,300]; //camera translation  */
+}  
