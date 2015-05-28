@@ -65,7 +65,7 @@ spool_thk  = 70;
 //-- Miscellaneous stuff - no influence on movement ---------------------------------
 struct_color = "red";
 moving_color = "deepskyblue";
-bed_color = [0.5,0.5,0.5,0.5];
+bed_color = [0.5,0.5,0.5,0.5]; // transparent 
 
 $vpd=camPos?2070:undef;      // camera distance: work only if set outside a module
 $vpr=camPos?[80,0,42]:undef; // camera rotation
@@ -83,7 +83,7 @@ $vpt=camPos?[220,-90,420]:undef; //camera translation  */
 
 //=====================================================================================
 
-$fn=24; // smooth the cylinders
+$fn=32; // smooth the cylinders
 
 //-- imposing effector position (if defined, this will supersedes the animation equation)
 // note that structure is rotated 30°, so x and y are rotated accordingly.
@@ -275,12 +275,11 @@ module disp_armcar(x,y,z,i, ang_hor, ang_ver, vpos_car, car_col, arm_col) {// ar
         }
         if (rod_space) 
           color ("silver") duplx(-rod_space)
-            cylz (-extrusion*1.9, extrusion*2.9,rod_space/2,0,-car_vert_dist);
+            cylz (-extrusion*1.875, extrusion*3,rod_space/2,0,-car_vert_dist);
         duplx(arm_space) // balls
           tsl (-arm_space/2,-car_hor_offset,-car_vert_dist)
             color("silver")
               sphere (d=dia_ball, $fn=64); 
-        
       }	 
 }//disp_armcar	
 
@@ -298,8 +297,6 @@ dec_housing = (beam_int_radius+3+extrusion)/2 + max(extrusion, railwidth)/2;
         rotz (180) // cut the opening 
           //tsl (0,0,(hbase+housing_opening)/2+10)
           hull() {
-           // dmirrorx() dmirrory() 
-           //   cylx(-20,1000,0,dec_housing+10,housing_opening/2);
             cylx(-20,1000,0,dec_housing+10,hbase+10);   
             cylx(-20,1000,0,500,hbase+10);   
             cylx(-20,1000,0,dec_housing+10,hbase+housing_opening-10);   
@@ -468,7 +465,7 @@ module sector (diam, height, half_angle) { // cut a sector
 } 
 
 module rounded_triangle (corner_radius, face_radius, int_radius,h,hpos=0) { // triangle with rounded corners and faces. int_radius is relative to corners
-fr= face_radius-corner_radius;  
+fr = face_radius-corner_radius;  
 cosint = int_radius*cos(30);  
 face_offset = sqrt(fr*fr-cosint*cosint)-int_radius*0.5; 
 ang_face = asin (cosint/fr);    
@@ -488,13 +485,13 @@ module hexagon (corner_radius, axis_space, axis_face_radius,h,hpos=0) {
   hull() {
     rot120 (-30)
       dmirrory ()
-        cylz (corner_radius*2,h,axis_face_radius,axis_space/2,hpos);
+        cylz (corner_radius*2,h,axis_face_radius,axis_space/2,hpos,48);
   }
 }
 
-//-- Miscellaneous -----------------------------------
-module build_fan40(thk=10) { // fan 40x40: axis on z - not used yet
-  color ("black")
+//-- Miscellaneous -------------------------------------------------------
+module build_fan40(thk=10, clr = "black") { // fan 40x40: axis on z - not used yet
+  color (clr)
     difference() {
       hull() 
         dmirrorx() dmirrory() cylz (3,thk,18.5,18.5);
@@ -502,8 +499,8 @@ module build_fan40(thk=10) { // fan 40x40: axis on z - not used yet
       dmirrorx() dmirrory() cylz (-3.2,50,16,16);
     }  
 }
-module build_fan30(thk=10) { // fan 40x40: axis on z - not used yet
-  color ("yellow")
+module build_fan30(thk=10, clr = "black") { // fan 40x40: axis on z - not used yet
+  color (clr)
     difference() {
       hull() 
         dmirrorx() dmirrory() cylz (3,thk,13.5,13.5);
