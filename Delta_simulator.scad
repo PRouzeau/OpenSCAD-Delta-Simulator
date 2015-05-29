@@ -1,31 +1,33 @@
-// Delta structure simulator, extracted from my Delta printer design.
+// Parallel columns delta robot simulator, extracted from my Delta printer design.
 // This simulator could emulate any delta travels, provided the paramaters are accurate.
-// Needs OpenScad 2015.03 or preferably the nightly versions (for animation).
+// Needs OpenScad 2015.03 or, for animations, the nightly versions.
 
-// Play with it! you won't broke anything.
+// Play with it! you won't broke anything. See line 79 for existing datasets. 
 
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. 
 // OpenScad offcicial version 2015.03 have a lot of flickering during animation. This is corrected in the nightly versions, which we recommended to use.  
 // Licence GPL V3.0 - Pierre ROUZEAU aka PRZ - 
 // version 0.4.2 - 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
+// 29 may 2015 - added internal comments to explain use.
 
-// comment out below variable if you want to do a closeup view during animation
+// set below variable to false if you want to do a closeup view during animation
 camPos = true; //if true force camera position according request in dataset
-//dimensions in mm.
+
+//dimensions are in mm.
 Delta_name = "Simulator example";
 //-- Frame data ----------------------------------------------
-beam_int_radius = 175; // radius inside the columns - used as reference radius
- // with rods this is the radius of the rod axis plane. 
+beam_int_radius = 175; // radius inside the rectangular columns - used as reference radius
+ // if columns are replaced with rods this is the radius of the rod axis plane. 
 hbase=60; // height of the base structure
 htop=30;  // height of top structure
 htotal=700; // total height, including base and top structure
 bed_level=8; // distance between the top of the bottom structure and the top of the bed.
 extrusion=20;
-rod_space=0; // set two rods instead of one extrusion, diameter based on extrusion
+rod_space=0; //if > 0 set two rods instead of one extrusion, diameter based on extrusion
   // if set, reference radius is rod axis plane and not extrusion face  
-railthk =0; // rail thickness
+railthk =0; // rail thickness. if > 0, show a cuboid simulating a sliding rail
 railwidth =0; 
-rail_base=0;
+rail_base=0; // base of the rail, which could be higher than bed plate
 
 //-- Carriage data --------------------------------------------------
 car_hor_offset=20; //Carriage: horizontal distance between the articulation and the internal of the columns
@@ -72,7 +74,10 @@ $vpr=camPos?[80,0,42]:undef; // camera rotation
 $vpt=camPos?[220,-90,420]:undef; //camera translation  */
 
 //== data set included below will supersedes above data ===============================
-//-- Uncomment the data set you want to see, else it defaults on an example -------------------------------------------
+//-- Uncomment the data set you want to see, else it defaults on an example
+// To play with the printers of the datasets, you shall either modify data in the file or 
+// set new values AFTER the include <file>.
+//--------------------------------------------------------------------
 //include <data_Kossel_mini.scad> //- Data set for delta 'Kossel mini' by J.Rocholl
 //include <data_Rostock_Max.scad> //- Data set for delta 'Rostock Max' by SeemeeCNC
 //include <data_Tiko.scad> //-- Data set for micro delta 'Tiko' by Tiko -slow
