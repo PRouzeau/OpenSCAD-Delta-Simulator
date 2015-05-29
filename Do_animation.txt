@@ -1,0 +1,23 @@
+HOW TO BUILD AN ANIMATION
+The only action of Openscad animation routine is to modify the $t variable
+from 0 to 1 in a number of steps defined in the animation panel at a defined speed. 
+see menu [view][animate].
+To move the effector in an animation, you shall create a function which return
+ a x,y,z curve from $t, then use resulting x,y,z to run function 'simul (x,y,z)'. 
+ see the view() function as example.
+The example function do multiple sequences in two rotations. so if you define 360 steps,
+ there will be a rotation of 2° between two steps.
+An interesting property of animate is that you could modify the program during the
+ animation (in fact, the program is recompiled for each frame). Super-fast debugging.
+A camera position is set in the parameters. To deactivate this camera (to view details, 
+carriage or arm conflicts), set the variable 'camPos'  (line 14) to 'false', this will 
+deactivate the camera position and you will be able to freely position your model. 
+Also, it is possible to define a camera movement in the animation by linking camera
+variables to $t variable.
+You could then build a film with VirtualDub or other program.
+In VirtualDub, you shall use a resize filter for compression (if not, it crashes).
+ Use even pixel numbers for the size.
+PRZ - Pierre ROUZEAU -
+licenses : 
+- Software : GPL V2.0
+-  Copyrighted material : CC-by-sa 3.0

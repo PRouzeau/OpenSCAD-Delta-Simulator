@@ -1,0 +1,55 @@
+OPENSCAD TRICKS : - Pierre Rouzeau - 29 may 2015      licence : CC-by-sa
+1/ Variables in OpenScad behave as constants
+2/ Transparency.  Transparent panels are only transparent for already built elements
+3/ Warnings on undefined variables  - set $ as first caracter of your variable
+4/ Creating own operators is very easy with children();
+5/ The camera variables have only an effect is set at top level – conditional definitions
+     ------------------------------------------
+1/ Variables in OpenScad behave as constants
+- look the OpenScad doc on variables
+OpenScad looks a strange langage as it is a functional language
+ http://en.wikipedia.org/wiki/Functional_programming
+which means that variables have only one value during their entire life, which could not 
+be modified and is set at compile time. The advantage is that you could set values in 
+command line, but only for top level variables. 
+if a variable value is set multiple times, the last set will be used at execution,
+ whatever the order of other instructions.
+  a=1; b=1; c= a+b;  echo (c) ;
+  a=2;
+the result of echo will be 3! 
+However, while you use a variable in a module, each module run creates a new instance 
+of the variable, so value could differ at each call of a module  (but is calculated 
+during compilation)
+It means that you cannot define a variable in a if condition, neither in a loop.
+For variable allocation depending from other variables, you could use the '?' selector.
+The trick:
+If you have multiple conditions, you shall create multiple variables in sequence, using
+only the last one
+myVar1 = condition1? val01:val02;
+myVar2 = condition2? val03:myVar1;
+myVar3 = condition3? val04:myVar2;
+You find a good example of this method in 'Delta_simulator.scad' in the  'view()'
+module for the trajectory calculation.
+
+2/ Transparency.  Transparent panels are only transparent for already built elements
+Transparency is only calculated against the elements already built, so if you set
+elements after transparent panels, you wont see them.
+The simple solution is to built the transparent panels last.
+
+3/ Warnings on undefined variables  - set $ as first character of your variable
+OpenScad don't crash if variables are not defined, so this could be used for selection.
+However, undefined variables gives a warning in the console.
+An undocumented information is that an undefined variable whose name start with '$'
+won't drive to warning if the variable is undefined. The '$' is part of the name.
+
+4/ Creating own operators is very easy with children();
+The children() function represent the parameter of an operator, so creating your own
+operators is very easy. Look the library at the end of the program. It could be used
+multiple times in a module (for duplication).
+
+5/ The camera variables have only an effect is set at top level – conditional definitions
+In addition, as they are variables, they couldn't be defined in an if condition, but as
+they are '$' variables, you will have no warning of your mistake.
+use the '?' selector to set these variables, example:
+$vpd = condition1?value1:undef;
+$vpd = condition2?value2:undef;
