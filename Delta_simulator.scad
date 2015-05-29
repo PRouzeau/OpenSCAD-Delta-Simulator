@@ -8,7 +8,7 @@
 // OpenScad offcicial version 2015.03 have a lot of flickering during animation. This is corrected in the nightly versions, which we recommended to use.  
 // Licence GPL V3.0 - Pierre ROUZEAU aka PRZ - 
 // version 0.4.2 - 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
-// 29 may 2015 - added internal comments to explain use.
+// 29 may 2015 - added internal comments to explain use. Frame order build modified for tranparent panels
 
 // set below variable to false if you want to do a closeup view during animation
 camPos = true; //if true force camera position according request in dataset
@@ -144,8 +144,7 @@ txtangle= -50;
 
 module view () {//if no fixed xe,ye,ze, viewing trajectory and other stuff as a function of $t
   // Herebelow the animation sequence (it loops) - 360 steps gives a step every 2° of rotation.
-  // 5 sequences: 1:flat peripheral 2:flat curve to center 3:climb up 4: curve from center sligthly down to periphery. 5: Helix down. Note that in sequence 4 carriage bang in the top structure as trajectory is on a cone, but available height is flat on the sides.
-  rotz (30) Frame(); 
+  // 5 sequences: 1:flat peripheral 2:flat curve to center 3:climb up 4: curve from center sligthly down to periphery. 5: Helix down. Note that in sequence 4 carriage bang in the top structure as trajectory is on a cone, but really available height is flat on the sides.
   if ((xe!=undef)&&(ye!=undef)&&(ze!=undef)) { 
      simul (xe,ye,ze); // arms and effector at the given xe,ye,ze values ze default to 0
      disp_text(-60,0,1.1*beam_int_radius,3*beam_int_radius); // display the data panel
@@ -172,7 +171,8 @@ module view () {//if no fixed xe,ye,ze, viewing trajectory and other stuff as a 
     
     simul (a_radius*cos(anim_angle),a_radius*sin(anim_angle),a_height);//simulate position (x,y,z) 
     disp_text(txtangle,0,txtypos,txtzpos); // display printer data on a panel aside the printer 
-  } 
+  }
+  rotz (30) Frame(); // if transparent panels, they shall be set at the end
 }
 
 // other possible equations of movement - just for example
@@ -321,24 +321,22 @@ dec_housing = (beam_int_radius+3+extrusion)/2 + max(extrusion, railwidth)/2;
             cylz (extrusion,htotal, beam_int_radius,rod_space/2);
         else  
           cubez(extrusion, extrusion, htotal, beam_int_radius+extrusion/2); 
-        
-    color("black")
+      color("black")
       if (belt_dist) 
         cubez (6,14,htotal, beam_int_radius-belt_dist+3); 
-    if ($bSide) buildSide(); // allow specific sides to be built
   }  
-  bed_dia = $bedDia?$bedDia:working_dia*1.12;
-  color(bed_color) // bed
-    if (bed_level) 
-      cylz (bed_dia,-3,0,0,hbase+bed_level,80);
-      //cylz (180,-3,0,0,hbase+bed_level,80);
   color ("black") 
     if(spool_diam)
       tsl (0,0,htotal) {
         cylz (spool_diam, spool_fl,0,0,spool_fl,50);
         cylz (spool_diam, spool_fl,0,0,spool_thk+spool_fl,50);
         cylz (60, spool_thk,0,0,spool_fl,50);
-      }
+      }  
+  bed_dia = $bedDia?$bedDia:working_dia*1.12;
+  color(bed_color) // bed
+    if (bed_level) 
+      cylz (bed_dia,-3,0,0,hbase+bed_level,80);
+  if ($bSide) rot120(-30) buildSide(); // allow specific sides to be built- last for transparent panels 
 }
 
 module Frame_shape (height, vpos=0, foffset=0) {
