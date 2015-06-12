@@ -1,4 +1,4 @@
-OPENSCAD TRICKS : - Pierre Rouzeau - 29 may 2015      licence : CC-by-sa
+OPENSCAD TRICKS : - Pierre Rouzeau - 29 may 2015   rev. June 2015  licence : CC-by-sa
 1/ Variables in OpenScad behave as constants
 2/ Transparency.  Transparent panels are only transparent for already built elements
 3/ Warnings on undefined variables  - set $ as first caracter of your variable
@@ -14,13 +14,16 @@ be modified and is set at compile time. The advantage is that you could set valu
 command line, but only for top level variables. 
 if a variable value is set multiple times, the last set will be used at execution,
  whatever the order of other instructions.
-  a=1; b=1; c= a+b;  echo (c) ;
+  a=1; 
+  b=1;
+  c= a+b;
+  echo (c);
   a=2;
-the result of echo will be 3! 
+the result of echo() will be 3! 
 However, while you use a variable in a module, each module run creates a new instance 
 of the variable, so value could differ at each call of a module  (but is calculated 
 during compilation)
-It means that you cannot define a variable in a if condition, neither in a loop.
+It means that you cannot set the value of a variable in a if condition, neither in a loop.
 For variable allocation depending from other variables, you could use the '?' selector.
 The trick:
 If you have multiple conditions, you shall create multiple variables in sequence, using
@@ -28,6 +31,7 @@ only the last one
 myVar1 = condition1? val01:val02;
 myVar2 = condition2? val03:myVar1;
 myVar3 = condition3? val04:myVar2;
+Those sequential conditions could be grouped in a unique one. 
 You find a good example of this method in 'Delta_simulator.scad' in the  'view()'
 module for the trajectory calculation.
 
