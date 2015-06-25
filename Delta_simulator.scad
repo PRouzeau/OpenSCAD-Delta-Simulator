@@ -387,7 +387,7 @@ module Frame_shape (height, vpos=0, foffset=0) {
 //corner_radius = 1.3*extrusion+frame_corner_roundness;
 //int_radius= beam_int_radius-frame_corner_roundness+3;
   if (rod_space)
-    hexagon (frame_corner_radius+foffset, rod_space, beam_int_radius, corner_offset, corner_hoffset, height, vpos); 
+    hexagon (frame_corner_radius+foffset, rod_space, beam_int_radius, corner_offset, 0, height, vpos); 
   else   
     if (rotAng2==90) { // means this is a 'square' delta
       side = (beam_int_radius+frame_corner_radius*1.4)*1.414;

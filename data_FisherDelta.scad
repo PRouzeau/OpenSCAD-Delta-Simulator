@@ -32,8 +32,9 @@ railwidth =0;
 rail_base=0;
 frame_corner_radius=11; 
 frame_face_radius= 0;
+corner_offset=0;
 
-belt_dist= 3;
+belt_dist = 3;
 spool_diam = 0;  
 
 $bedDia=170; // force the bed diameter
@@ -61,21 +62,23 @@ module buildCar(ht=16) { // modify to allow excentrate articulation (lowered) ??
 } //*/
 
 $bSide = true; // setup the below side panel *in addition* to frame
-module buildSide() {
+module buildSides() {
   platethk = 3;
   platewd  = 190;
   platedist = 89; // internal face dist to centre
   diams  = 26;
   openht = htotal-hbase-bed_level-htop-diams;
+  
   color ("black")
   //color([0.5,0.5,0.5,0.5]) 
+  rot120 (-30)
     difference() {
       cubez (platethk, platewd, htotal,-platedist-platethk/2); 
       dmirrory()
         tsl (0,0,openht/2+hbase+bed_level+diams/2)
           hull() 
             dmirrorz() cylx (-diams,100,-platedist,100,openht/2);
-      tsl (0,0,housing_opening/2+hbase+bed_level+diams/2)
+      tsl (0,0,housing_opening/2+hbase+bed_level+diams/2-0.1)
         hull() 
           dmirrory() dmirrorz()
             cylx (-diams,100,-platedist,68-diams/2,housing_opening/2);

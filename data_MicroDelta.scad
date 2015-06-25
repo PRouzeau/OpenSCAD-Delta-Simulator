@@ -32,7 +32,7 @@ railwidth =0;
 rail_base=0;
 frame_corner_radius=10; 
 frame_face_radius= 0;
-corner_offset=-35;
+corner_offset=0;
 
 belt_dist= 1;
 spool_diam = 0;  
