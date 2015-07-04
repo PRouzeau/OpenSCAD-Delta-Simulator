@@ -7,11 +7,13 @@
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. 
 // OpenScad official version 2015.03 have a lot of flickering during animation. This is corrected in the nightly versions, which I recommended to use.  
 // Licence GPL V2.0 - Pierre ROUZEAU aka PRZ - 
-// version 0.4.3 - 12 June 2015
+// version 0.4.4 - 5 July 2015
 // 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
 // 29 may 2015 - added internal comments to explain use. Frame order build modified for tranparent panels
 // June - allow more personnalisation - review fan , spool - allow dataset text lines
 // 12 June: 'square Delta'
+// end june - correct data sets broken by the revision 0.4.3
+//  5 July : atan2 function simplify polar transformation
 
 // set below variable to false if you want to do a closeup view during animation
 camPos = true; //if true force camera position according request in dataset
@@ -211,12 +213,7 @@ module simul (x, y, z=0) { //display delta with effector and arms at a given pos
 }
 
 module delta_cal (x, y, z, rot) { // calculation of arms angles and display
-// polar transformation routine
-  ang=((x>0) && (y==0))?90:undef; // some fun with OpenSCAD limitations
-  ang=((x<0) && (y==0))?270:undef;// create new 'variables' as they
-  ang=((x==0) && (y==0))?0:undef; // cannot be reassigned
-  ang2 = (ang==undef)? atan(y/x):ang; // no native function for cartesian to polar (matrix ?)
-  angt=(x>=0)?ang2:180+ang2;
+  angt = atan2 (y,x); // atan2 take into account the quadrant 
   rad = sqrt(x*x+y*y);    // radius from center
   xc = rad*cos(angt+rot); //for arm and carriage rotation
   yc = rad*sin(angt+rot);
