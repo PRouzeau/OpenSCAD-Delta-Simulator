@@ -1,32 +1,43 @@
-// Data Set for Fisher Delta printer - 28 May 2015  revision according designer data
+// Data Set for Fisher Delta printer - 11 July 2015  revision as measured.
+// 27 sept 2015 - add alternatives for arm length
 Delta_name = "Fisher Delta by RepRapPro";
 housing_base=0; // no housing
 housing_opening = 200; // defines height of the opening in the housing
 
 beam_int_radius = 123; // radius on rod axis plane - used as reference radius
 hbase = 47; // height of the base structure 
-htop  = 18;  // height of top structure
+htop  = 16;  // height of top structure
 htotal= 426; // total height, including base and top structure
 
-bed_level = 8; 
+bed_level = 9; 
 extrusion = 8; // Rod diameter
 rod_space = 45; // set two rods instead of one extrusion
 
 car_hor_offset= 19; 
 hcar = 15; 
 car_vert_dist = 7.5;
-top_clearance = 8.5; // clearance between top of the carriage and top structure
+top_clearance = 8; // clearance between top of the carriage and top structure
 
 eff_hor_offset= 23; 
-eff_vert_dist = 4; 
-arm_space= 45; // space between the arms
+eff_vert_dist = 4.5; 
+arm_space= 50; // space between the arms
 
-delta_angle = 60; 
+//*delta_angle = 61.55; 
 arm_length = 160; // supersedes delta_angle  
-mini_angle = 12.5; 
-hotend_vert_dist = 17.5;
+mini_angle = 12.5; // gives height 160/180 - that is a too low angle - did not work well for large diameters */
+/* alternative for test
+arm_length = 170; 
+mini_angle = 23.5; // - same diameter but more usable - gives height 150/168  */
+/* 
+arm_length = 168; 
+mini_angle = 22; // - same diameter but more usable - gives height 152/170  */
+/*
+arm_length = 166; 
+mini_angle = 20; // - same diameter but more usable - gives height 154/173  */
+
+hotend_vert_dist = 16.5;
 dia_ball= 6;
-dia_arm = 5;
+dia_arm = 10;
 railthk =0; 
 railwidth =0; 
 rail_base=0;
@@ -67,7 +78,7 @@ module buildSides() {
   platewd  = 190;
   platedist = 89; // internal face dist to centre
   diams  = 26;
-  openht = htotal-hbase-bed_level-htop-diams;
+  openht = htotal-hbase-htop-diams;
   
   color ("black")
   //color([0.5,0.5,0.5,0.5]) 
@@ -75,13 +86,13 @@ module buildSides() {
     difference() {
       cubez (platethk, platewd, htotal,-platedist-platethk/2); 
       dmirrory()
-        tsl (0,0,openht/2+hbase+bed_level+diams/2)
+        tsl (0,0,openht/2+hbase+diams/2)
           hull() 
-            dmirrorz() cylx (-diams,100,-platedist,100,openht/2);
+            dmirrorz() cylx (-diams,100, -platedist,100,openht/2);
       tsl (0,0,housing_opening/2+hbase+bed_level+diams/2-0.1)
         hull() 
           dmirrory() dmirrorz()
-            cylx (-diams,100,-platedist,68-diams/2,housing_opening/2);
+            cylx (-diams,100, -platedist,70-diams/2,housing_opening/2);
     }
 }
 
