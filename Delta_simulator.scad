@@ -10,10 +10,11 @@
 // version 0.4.4 - 5 July 2015
 // 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
 // 29 may 2015 - added internal comments to explain use. Frame order build modified for tranparent panels
-// June - allow more personnalisation - review fan , spool - allow dataset text lines
+// June - allow more personalisation - review fan , spool - allow dataset text lines
 // 12 June: 'square Delta'
 // end june - correct data sets broken by the revision 0.4.3
-//  5 July : atan2 function simplify polar transformation
+//  5 July 15: atan2 function simplify polar transformation
+// 13 Oct 15: add Delta-six dataset by sage (dataset written by geodave810). explanation of personalisation 
 
 // set below variable to false if you want to do a closeup view during animation
 camPos = true; //if true force camera position according request in dataset
@@ -75,6 +76,7 @@ rotAng2 = 120; // added angles definition for 'square' delta - see specific data
 rotAng3 = 240;
 frame_rot = 30;
 move_rot  = 0;
+railrot = -30;
 
 //-- Miscellaneous stuff - no influence on movement ---------------------------------
 struct_color = "red";
@@ -105,6 +107,7 @@ txtangle= -60;
 //include <data_FisherDelta.scad> //- Data set for Fisher delta by RepRapPro
 //include <data_MicroDelta.scad>  //- Data set for Micro delta by e-Motion tech
 //include <data_Square_Delta.scad> //- Data set for Square delta by Ryan Carlyle
+//include <data_Delta-Six.scad>  //- Data set for Delta-6 by Sage
 
 //=====================================================================================
 //$details=true;
@@ -228,7 +231,7 @@ module delta_cal (x, y, z, rot) { // calculation of arms angles and display
     txta = str("Angles: vertical: ",90-round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
     ltxtsup = $dtxt? len($dtxt):0;
     rot (0,-10,txtangle-move_rot) 
-      tsl (txtxpos, txtypos,txtzpos-txtsize*21-ltxtsup*1.5)
+      tsl (txtxpos, txtypos,txtzpos-txtsize*22.3-ltxtsup*1.5)
          rot (90,0,90) color("black")
            textz(txta, txtsize*0.85, 2, false);
   }
@@ -335,7 +338,7 @@ dec_housing = (beam_int_radius+3+extrusion)/2 + max(extrusion, railwidth)/2;
             }
         }
     } 
-    rot120(-30) { // vertical beams and rails
+    rot120(railrot) { // vertical beams and rails
       if (railthk) 
         color("silver")      
           cubez(railthk, railwidth, htotal-rail_base, beam_int_radius-railthk/2,0,rail_base); 
@@ -400,6 +403,7 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     str("    ",Delta_name),
     "",
     str("Diameter inside beams: ",round(beam_int_radius*2)," mm"),
+    str("Total height: ",round(htotal)," mm"),
     str("Space between arms: ",arm_space," mm"),
     str("Effector offset: ",round(eff_hor_offset*10)/10," mm"),
     str("Arm radius: ",round(radius_cent*10)/10," mm"),
@@ -524,10 +528,10 @@ cosint = int_radius*cos(30);
 face_offset = sqrt(fr*fr-cosint*cosint)-int_radius*0.5; 
 ang_face = asin (cosint/fr);    
   hull() 
-    rot120(-30) 
+    rot120(railrot) 
       cylz(corner_radius*2,h,int_radius,0,hpos,80);
   if (ang_face && face_offset) // just to remove warning
-    rot120(-30) // not included in the 'hull()' for performance reasons
+    rot120(railrot) // not included in the 'hull()' for performance reasons
       tsl (face_offset,0,hpos) 
         difference() {
           sector (face_radius*2,h,ang_face);
@@ -537,7 +541,7 @@ ang_face = asin (cosint/fr);
 
 module hexagon (corner_radius, axis_space, axisf_radius,coffset,choffset, h,hpos=0) { 
   hull() {
-    rot120 (-30)
+    rot120 (railrot)
       dmirrory ()
         cylz (corner_radius*2,h,axisf_radius+coffset,axis_space/2+coffset/2+choffset,hpos,48);
   }
