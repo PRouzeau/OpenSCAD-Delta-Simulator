@@ -1,20 +1,21 @@
 // Parallel columns delta robot simulator, extracted from my Delta printer design.
-// This simulator could emulate any delta travels, provided the paramaters are accurate.
-// Needs OpenScad 2015.03 or, for animations, the nightly versions.
+// This simulator could emulate any delta travels, provided the parameters are accurate.
+// Needs OpenScad 2015.03 or, for animations, the development snapshots.
 
 // Play with it! you won't broke anything. See line 92 for existing datasets. 
 
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. 
-// OpenScad official version 2015.03 have a lot of flickering during animation. This is corrected in the nightly versions, which I recommended to use.  
+// OpenScad official version 2015.03 have a lot of flickering during animation. This is corrected in the development snapshots, which I recommended to use.  
 // Licence GPL V2.0 - Pierre ROUZEAU aka PRZ - 
 // version 0.4.4 - 5 July 2015
 // 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
-// 29 may 2015 - added internal comments to explain use. Frame order build modified for tranparent panels
-// June - allow more personalisation - review fan , spool - allow dataset text lines
+// 29 may 2015 - added internal comments to explain use. Frame order build modified for transparent panels
+// June - allow more personalisation - review fan, spool - allow dataset text lines
 // 12 June: 'square Delta'
 // end june - correct data sets broken by the revision 0.4.3
 //  5 July 15: atan2 function simplify polar transformation
 // 13 Oct 15: add Delta-six dataset by sage (dataset written by geodave810). explanation of personalisation 
+// 21 dec 15: add effector stability coefficient - see drawing and text
 
 // set below variable to false if you want to do a closeup view during animation
 camPos = true; //if true force camera position according request in dataset
@@ -40,7 +41,7 @@ car_hor_offset=20; //Carriage: horizontal distance between the articulation and 
 car_vert_dist=27;  //Carriage: vertical articulation distance/reference plane (at the top of the carriage) 
 hcar=75; // carriage height - no effect on travel
 dia_ball = 10; 
-dia_arm  = 8;
+dia_arm  = 6;
 
 //-- Effector data --------------------------------------
 eff_hor_offset=28; //Distance effector center/articulations Kossel mini: 20, Rostock max: 33mm
@@ -59,7 +60,7 @@ arm_length = 0; // Alternatively, you could define the arm length, which will su
  
 mini_angle = 20; //minimum angle/horizontal. 20° is generally considered as the practical limit. That will not modify the design, only give you an approximate information  about the maximum possible range. The range is not really circular, but will be considered so for practical reasons. You could go below 20°, but there is no real point, because when the other arms are nearing vertical, the effector bang the columns. Also, it drives to dynamic problems (a small effector move need a large carriage move), extra loads and effector loss of stability.
 
-hotend_vert_dist = 20;//vertical distance between hotend nozzle and effector bottom plate. depends from the effector design and hotend type.
+hotend_vert_dist = 30;//vertical distance between hotend nozzle and effector bottom plate. depends from the effector design and hotend type.
 
 //Frame details
 frame_corner_radius=1.5*extrusion; //modify corner shape radius.
@@ -163,6 +164,14 @@ rdiff = beam_int_radius-car_hor_offset-working_dia/2; // horiz dist between top 
 ht_side = sqrt (ar_length*ar_length-rdiff*rdiff); //Carriage height while at working radius
 working_height_min = travel_stop-(effVtPos +(ht_side+car_vert_dist+eff_vert_dist));
 
+//Effector geometrical stability calculation - OpenScad angles in deg
+Rd = sqrt (pow(arm_space/2,2)+pow(eff_hor_offset,2));
+An = 60-atan (arm_space/2/eff_hor_offset);
+ball_end_space = 2*sin(An)*Rd;  //echo (ball_end_space =ball_end_space);
+htv = tan (d_angle)*eff_hor_offset; echo (htv=htv); //virtual articulation pos
+virtual_axis_d = htv-eff_vert_dist-hotend_vert_dist; //diff hotend/virtual arti
+TESc = pow(arm_space,2)/ball_end_space/abs(virtual_axis_d); // arbitrary coef
+
 //====================================================================
 
 module view () {//if no fixed xe,ye,ze, viewing trajectory and other stuff as a function of $t
@@ -231,7 +240,7 @@ module delta_cal (x, y, z, rot) { // calculation of arms angles and display
     txta = str("Angles: vertical: ",90-round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
     ltxtsup = $dtxt? len($dtxt):0;
     rot (0,-10,txtangle-move_rot) 
-      tsl (txtxpos, txtypos,txtzpos-txtsize*22.3-ltxtsup*1.5)
+      tsl (txtxpos, txtypos,txtzpos-txtsize*25-ltxtsup*1.5)
          rot (90,0,90) color("black")
            textz(txta, txtsize*0.85, 2, false);
   }
@@ -272,11 +281,16 @@ module disp_armcar(x,y,z,i, ang_hor, ang_ver, vpos_car, car_col, arm_col) {// ar
   tsl (x,y) rotz (i) { // arms grow from effector
      // Arm creation and duplication
       tsl (-arm_space/2,eff_hor_offset,zpos){
-        duplx(arm_space) {
-          color("silver") 
-            sphere (d=dia_ball,$fn=64); // ball
-          color("grey") rot(ang_hor,0,ang_ver)
-            cylz (dia_arm, ar_length-dia_ball,0,0,dia_ball/2);
+        if ($bArm) 
+          buildArm (ang_hor,ang_ver);
+        else {
+          duplx(arm_space) {
+            color("grey") 
+              rot(ang_hor,0,ang_ver) 
+                cylz (dia_arm, ar_length-dia_ball,0,0,dia_ball/2);
+            color("silver") 
+              sphere (d=dia_ball,$fn=64); // ball
+          }
         }  
         if (eff_vert_dist >=10) // ball supports
           color(moving_color)
@@ -351,9 +365,9 @@ dec_housing = (beam_int_radius+3+extrusion)/2 + max(extrusion, railwidth)/2;
             cubez(extrusion, extrusion, htotal, beam_int_radius+extrusion/2); 
       if (belt_dist||$bdist) {
         bd = $bdist ? $bdist:belt_dist;
-        ht = $ht_tens?$ht_tens-25:0; // if tensioner at the bottom
+        ht = $ht_tens?$ht_tens-25:25; // if tensioner at the bottom
         color("black")
-          cubez (6,14,htotal-30-ht, beam_int_radius-bd+3,0,15+ht); 
+          cubez (6,14,htotal-ht-40,  beam_int_radius-bd+3,0,ht); 
       }  
     }
     bed_dia = $bedDia?$bedDia:working_dia*1.12;
@@ -364,7 +378,7 @@ dec_housing = (beam_int_radius+3+extrusion)/2 + max(extrusion, railwidth)/2;
     sprot = $spool_rot? $spool_rot:[0,0,0];  
     sptsl = $spool_tsl? $spool_tsl:[0,0,htotal+spool_thk/10];    
     if(spool_diam)
-      translate (sptsl) rotate (sprot) spool();
+      rotate (sprot) translate (sptsl) spool();
     if ($bSide) buildSides(); // allow specific sides to be built - at the end if transparent    
   }  
 }
@@ -414,7 +428,7 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     str("For bed/ceiling: ",round(travel_stop-hbase-bed_level)," mm"),
     str("-Centre working height: ",round(working_height_cent)," mm"),
     str("-Minimum working height: ",round(working_height_min)," mm"),
-    "",
+    str("Effector stability:", round(TESc*100)/100, "  distV:",round(virtual_axis_d*10)/10,"mm"),
     ""
   ];
   vtext1 = $dtxt? concat (vtext0,$dtxt):vtext0; //add dataset text, if any - shall be an array
@@ -493,6 +507,14 @@ module cylx (diam,length,x=0,y=0,z=0,div=$fn) {//Cylinder on X axis
   center=(diam<0)?true:false;	
   translate([x+mv,y,z])
     rotate([0,90,0])
+      cylinder (d=(abs(diam)), h=abs(length), $fn=div, center=center);
+}
+
+module cyly (diam,length,x=0,y=0,z=0,div=$fn) {//Cylinder on X axis
+  mv=(length<0)?length:0;	// not ok if diam AND length are negative. who cares ? 
+  center=(diam<0)?true:false;	
+  translate([x,y+mv,z])
+    rotate([-90,0,0])
       cylinder (d=(abs(diam)), h=abs(length), $fn=div, center=center);
 }
 

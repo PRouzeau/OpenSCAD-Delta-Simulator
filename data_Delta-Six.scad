@@ -1,6 +1,7 @@
 // Data Set for Openbuilds Delta-Six, designed by Sage
 Delta_name = "Delta-Six by Sage"; // Geodave 810, October, 2015 - adaptation and mods by PRZ noted by !!
 // See http://www.openbuilds.com/builds/delta-six.476 for files
+
 $bAllFrame = true; // replace frame by following routine - no need to modify the simulator program
 module  buildAllFrame() { DrawFinal();}  //run by the simulator in 'simul' module
 *DrawFinal(); // use for development only
@@ -39,14 +40,11 @@ mini_angle = 20; // !! Not defined in original description, but comply with bed 
 hotend_vert_dist = 12;
 dia_ball= 8;
 dia_arm = 6;
-railthk =0; 
-railwidth =0; 
-rail_base=0;
 frame_corner_radius=100; 
 frame_face_radius= 0;
 corner_offset=-65;
 
-belt_dist=18; //!! added to check conflicts
+belt_dist=18; //!! added to check conflicts with effector
 spool_diam = 0;  
 spool_thk = 0;   
 
