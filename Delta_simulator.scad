@@ -291,6 +291,12 @@ module disp_armcar(x,y,z,i, ang_hor, ang_ver, vpos_car, car_col, arm_col) {// ar
             color("silver") 
               sphere (d=dia_ball,$fn=64); // ball
           }
+          if (wire_space)  // display tensioning wires
+            color("white") 
+              tsl ((arm_space-wire_space)/2)
+                duplx(wire_space) 
+                  rot(ang_hor,0,ang_ver) 
+                    cylz (1, ar_length);
         }  
         if (eff_vert_dist >=10) // ball supports
           color(moving_color)
@@ -436,8 +442,8 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
   ltxt = len(vtext);
   rot (0,-10,angz) {
     color ("white") // panel for writing
-      tsl (xpos, ypos-txtsize, zpos-(ltxt-0.2)*1.5*txtsize) 
-        cube ([1,23.5*txtsize,(ltxt+1)*1.5*txtsize]); 
+      tsl (xpos, ypos-txtsize, zpos-(ltxt+0.8)*1.5*txtsize) 
+        cube ([1,23.5*txtsize,(ltxt+2)*1.5*txtsize]); 
     color ("black") { // the writing on the wall
       for (i=[0:ltxt-1]) {
         txs=(i==ltxt-1)?txtsize*0.8:txtsize; // last line is smaller size (license)
