@@ -69,7 +69,7 @@ corner_offset = -3; //offset center of the corner sector / beam internal radius
 housing_base = 0; // if = 0 no housing shown - usually set to hbase
 housing_opening = 300;
 belt_dist=0; //distance between the belt and the internal of the column. (belt face at the contact point with effector). if this data is different from 0, rough belt approximation will be shown, for conflict evaluation.
-spool_diam = 200; // if spool_diameter > 0, spool shown on top - vertical axis
+spool_diam = 0; // if spool_diameter > 0, spool shown on top - vertical axis
 spool_thk  = 70;
 
 // geometry
@@ -238,9 +238,9 @@ module delta_cal (x, y, z, rot) { // calculation of arms angles and display
     disp_armcar(x,y,z,-rot,-h_angle,z_angle,vpos_car);
   if (rot==0) { // display angles
     txta = str("Angles: vertical: ",90-round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
-    ltxtsup = $dtxt? len($dtxt):0;
+    //ltxtsup = $dtxt? len($dtxt):0;
     rot (0,-10,txtangle-move_rot) 
-      tsl (txtxpos, txtypos,txtzpos-txtsize*25-ltxtsup*1.5)
+      tsl (txtxpos, txtypos,txtzpos-txtsize*24)
          rot (90,0,90) color("black")
            textz(txta, txtsize*0.85, 2, false);
   }
@@ -423,7 +423,7 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     str("    ",Delta_name),
     "",
     str("Diameter inside beams: ",round(beam_int_radius*2)," mm"),
-    str("Total height: ",round(htotal)," mm"),
+    str("Reference height: ",round(htotal)," mm"),
     str("Space between arms: ",arm_space," mm"),
     str("Effector offset: ",round(eff_hor_offset*10)/10," mm"),
     str("Arm radius: ",round(radius_cent*10)/10," mm"),
@@ -443,7 +443,7 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
   rot (0,-10,angz) {
     color ("white") // panel for writing
       tsl (xpos, ypos-txtsize, zpos-(ltxt+0.8)*1.5*txtsize) 
-        cube ([1,23.5*txtsize,(ltxt+2)*1.5*txtsize]); 
+        cube ([1,24.5*txtsize,(ltxt+2)*1.5*txtsize]); 
     color ("black") { // the writing on the wall
       for (i=[0:ltxt-1]) {
         txs=(i==ltxt-1)?txtsize*0.8:txtsize; // last line is smaller size (license)
