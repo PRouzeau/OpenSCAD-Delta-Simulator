@@ -1,9 +1,10 @@
-OPENSCAD TRICKS : - Pierre Rouzeau - 29 may 2015   rev. June 2015  licence : CC-by-sa
+OPENSCAD TRICKS : - Pierre Rouzeau - 05 feb 2016   (c) 2015-2016 licence : CC-BY-SA
 1/ Variables in OpenScad behave as constants
 2/ Transparency.  Transparent panels are only transparent for already built elements
 3/ Warnings on undefined variables  - set $ as first caracter of your variable
 4/ Creating own operators is very easy with children();
 5/ The camera variables have only an effect is set at top level – conditional definitions
+6/ Conditional variables don't use command line definitions
      ------------------------------------------
 1/ Variables in OpenScad behave as constants
 - look the OpenScad doc on variables
@@ -38,11 +39,13 @@ module for the trajectory calculation.
 2/ Transparency.  Transparent panels are only transparent for already built elements
 Transparency is only calculated against the elements already built, so if you set
 elements after transparent panels, you wont see them.
-The simple solution is to built the transparent panels last.
+The simple solution is to built the transparent panels last. However, to highlight
+view of some parts, you can play with the display order. 
 
 3/ Warnings on undefined variables  - set $ as first character of your variable
 OpenScad don't crash if variables are not defined, so this could be used for selection.
 However, undefined variables gives a warning in the console.
+In a condition, undefined variable is false
 An undocumented information is that an undefined variable whose name start with '$'
 won't drive to warning if the variable is undefined. The '$' is part of the name.
 
@@ -51,9 +54,17 @@ The children() function represent the parameter of an operator, so creating your
 operators is very easy. Look the library at the end of the program. It could be used
 multiple times in a module (for duplication).
 
-5/ The camera variables have only an effect is set at top level – conditional definitions
+5/ The camera variables have only an effect is set at top level, not in a module
 In addition, as they are variables, they couldn't be defined in an if condition, but as
 they are '$' variables, you will have no warning of your mistake.
 use the '?' selector to set these variables, example:
 $vpd = condition1?value1:undef;
 $vpd = condition2?value2:undef;
+
+6/ Conditional variables don't use command line definitions
+If you define a variable from a condition or calculation at top level e.g.
+myVar1 = (myVar2)?22:66; // or
+myVar3 = 18;
+myVar4 = myVar3-9;
+the value you defined in a command line execution with a '-D' parameter will not
+be used. No alternative found yet.

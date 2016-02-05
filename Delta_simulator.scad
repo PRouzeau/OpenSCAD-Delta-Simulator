@@ -168,9 +168,10 @@ working_height_min = travel_stop-(effVtPos +(ht_side+car_vert_dist+eff_vert_dist
 Rd = sqrt (pow(arm_space/2,2)+pow(eff_hor_offset,2));
 An = 60-atan (arm_space/2/eff_hor_offset);
 ball_end_space = 2*sin(An)*Rd;  //echo (ball_end_space =ball_end_space);
-htv = tan (d_angle)*eff_hor_offset; echo (htv=htv); //virtual articulation pos
-virtual_axis_d = htv-eff_vert_dist-hotend_vert_dist; //diff hotend/virtual arti
-TESc = pow(arm_space,2)/ball_end_space/abs(virtual_axis_d); // arbitrary coef
+//Following discussions on google deltabot forum, virtual articulation notion abandoned due to lack of sources. TES modified accordingly. 
+//htv = tan (d_angle)*eff_hor_offset; echo (htv=htv); //virtual articulation pos
+//virtual_axis_d = htv-eff_vert_dist-hotend_vert_dist; //diff hotend/virtual arti
+TES = pow(arm_space,2)/ball_end_space; // arbitrary coef . dimension: mm
 
 //====================================================================
 
@@ -240,7 +241,7 @@ module delta_cal (x, y, z, rot) { // calculation of arms angles and display
     txta = str("Angles: vertical: ",90-round(h_angle*10)/10, " horizontal: ", round(z_angle*10)/10);
     //ltxtsup = $dtxt? len($dtxt):0;
     rot (0,-10,txtangle-move_rot) 
-      tsl (txtxpos, txtypos,txtzpos-txtsize*24)
+      tsl (txtxpos, txtypos,txtzpos-txtsize*25.5)
          rot (90,0,90) color("black")
            textz(txta, txtsize*0.85, 2, false);
   }
@@ -434,7 +435,8 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     str("For bed/ceiling: ",round(travel_stop-hbase-bed_level)," mm"),
     str("-Centre working height: ",round(working_height_cent)," mm"),
     str("-Minimum working height: ",round(working_height_min)," mm"),
-    str("Effector stability:", round(TESc*100)/100, "  distV:",round(virtual_axis_d*10)/10,"mm"),
+    str("Effector stability:", round(TES), " mm"),
+    str("Effector plane/hotend distance:",round(hotend_vert_dist+eff_vert_dist)," mm"),
     ""
   ];
   vtext1 = $dtxt? concat (vtext0,$dtxt):vtext0; //add dataset text, if any - shall be an array
@@ -468,14 +470,19 @@ module rot120 (a=0) {
     rotate([0,0,i+a]) children();
 }
 
-module duplx (dx) { // duplicate an object at distance dx
-  children();
-  if (dx) tsl(dx) children();
+module duplx (dx, nb=1, startx=0) { // duplicate object at distance 'dx', times nb
+  for (i=[0:nb])
+    tsl (dx*i+startx) children();
 }
 
-module duplz (dz) { // duplicate vertically an object at distance dz
-  children();
-  if (dz) tsl(0,0,dz) children();
+module duply (dy, nb=1, starty=0) { // duplicate object at distance 'dy',  times nb
+  for (i=[0:nb])
+    tsl (0,dy*i+starty) children();
+}
+
+module duplz (dz, nb=1, startz=0) { // duplicate object at distance 'dz',  times nb
+  for (i=[0:nb])
+    tsl (0,0,dz*i+startz) children();
 }
 
 module dmirrorx() { // duplicate and mirror on x axis

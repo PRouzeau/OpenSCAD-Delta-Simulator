@@ -1,8 +1,6 @@
 I have defined in the OpenScad delta simulator an arbitrary coefficient to evaluate the effect of the geometry on effector tilting stability. This effector stability coefficient is an element among others affecting stability, as it is only related to geometry. Lack of stiffness of articulations or carriage may also drive to low stability. A printer is a mechanical ensemble with a lot of interactions. Also, theory tells that loads on articulated rods are only axial, however in real world, some articulation type have significant friction on the articulation, creating bending moments in the rods, transferred to the effector.
 A good geometrical stability may help to cope with some construction faults.
-The only drawback is that if you lower the hotend to have the nozzle located as near as possible to the virtual articulation (see below), you loose some usable height.
 
-The theoretical base of this coefficient calculation is that a mobile attached to articulated rods tend to rotate around a virtual articulation point located at the rod convergence point. So, on a delta printer, if the nozzle is located at this virtual articulation point, tilting the effector will displace it, while the nozzle end will stay at the same place. This is verified by manually tilting an effector. However, for constructive reasons, the nozzle end is never located at this 'best location'. In addition, this virtual articulation point move relatively to the effector while the effector displaced sideways. 
 Something which is not always well understood is that the lowest offset will give the best stability. The aim of a designer shall be to have the articulation points at the corners of the effector to be as near as possible, to prevent effector tilting moment. That does not in itself improve the effector stability, but it reduced the tilting moment, so it shall be taken into account. There are a few design where the articulation points are merged (as the Spiderbot which have a three ball effector). In this case, the geometrical stability is infinite, as there is no tilting moment.
 Large arm space (which is also associated with small space at the articulation end) will help limit the effect of play in articulations.
 
@@ -10,30 +8,32 @@ Definition of this coefficient, named TES for tilting effector stability.
 Look at the drawing for details
 a being the lever due to arm space (see drawing)
 b being the space between balls (articulations)
-c being the space between hotend nozzle and arms axis crossing (virtual articulation)
 
 -Tilt geometric load moment is related to a/b, a being proportional to arm space
 -Tilt stiffness is proportional to arm space
--Effect of tilting is proportional to c (distance between arm convergence and hotend nozzle)
 
-TES = (Arm space)²/b/abs(c), 
-with c defined at center and at maximum radius
-So there will be TESc (at center) and TESr (at max radius). Yet only TESc is calculated in the simulator.
+TES = (Arm space)²/b, 
 
 It is important to note that the TES does not depend from arm length, only effector geometry. Indeed, the arm stiffness in their axis is huge compared to other elements, notably articulation stiffness, so the arm length have nearly no effect on tilting stability. This is why you could install the small Kossel mini effectors on large printers without problems.
 
 Numbers (as hotend length may vary, this may be approximative value) :
 Larger is better.
-Kossel (with J-head)TESc : 18 :  hotend 8mm below virtual articulation
-Rostock Max TESc : 1.8 : hotend is way above virtual articulation (> 40mm), offset is large 
-Fisher TESc : 9 While hotend is 18mm above virtual articulation, the low space between balls at the end helps stability.
-Micro-delta TESc : 1.3 : hotend 48 mm above virtual articulation, large offset, large space between balls contribute to a low stability.
-D-Box (my printer) TESc : 28 : hotend nozzle is 25mm above virtual articulation (with two nuts on the Prometheus), however, the large arm space (84mm) coupled with very low distance between balls at the angles (10 mm) gives a very good stability, which is evident while manipulating the effector by hand. However, the friction of the articulations is significant and that creates a moment in the effector which is not taken into account in the TES.
+Kossel (with J-head)TES : 153 :  hotend nozzle 44mm below effector plane
+Rostock Max TES : 78 : hotend 16mm below effector plane, offset is large 
+Fisher TES : 168  : hotend is 21mm below effector plane, the low space between balls at the end helps stability.
+Micro-delta TES : 62 : hotend 16 mm below effector plane, large offset, large space between balls contribute to a low stability.
+D-Box (my printer) TES : 708 : hotend nozzle is 32mm below effector plane (with two nuts on the Prometheus), large arm space (84mm) with very low distance between balls at the angles (10 mm) gives a very good stability, which is evident while manipulating the effector by hand. However, the friction of the articulations is significant and that creates a moment in the effector which is not taken into account in the TES.
+Lily F (my other design) TES : 173 Compromises made to install the kinematic positioning
 
 Having hotend above effector as for micro-delta (e-motion tech) or Rostock max (seemeCNC) contribute to a low stability. That increase vertical usable height, which is a bit irrelevant for the Rostock max, which is a very tall machine. For the Rostock Max, given its large offset, stability may be greatly improved with the hotend below the effector and will simplify part fan installation.
 The hotend below effector as made on Kossel drive the nozzle being below virtual articulation, but with a lower absolute difference than other designs, with the added benefit of a much lower offset, hence relatively good stability.
 
 First public issue of this coefficient was done in the following thread of Deltabot Forum :
 https://groups.google.com/forum/#!topic/deltabot/iIAQ1cGgcWY
+then discussed here:
+https://groups.google.com/forum/#!topic/deltabot/GhHOMxzWfZ0
 
-© Pierre ROUZEAU 2015   CC BY-SA
+
+© Pierre ROUZEAU 2015-2016   CC BY-SA
+
+Important note : The virtual articulation notion have been abandoned due to lack of sources and time to analyze.
