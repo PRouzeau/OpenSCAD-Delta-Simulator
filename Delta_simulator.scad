@@ -92,8 +92,8 @@ $vpt=camPos?[215,-90,420]:undef; //camera translation  */
 txtsize = beam_int_radius/16;
 txtxpos = 0.8*beam_int_radius;
 txtypos = 1.22*beam_int_radius;
-txtzpos = 2.2*beam_int_radius;
-txtangle= -60;
+txtzpos = 350;
+txtangle= -62;
 
 //== data set included below will supersedes above data ===============================
 //-- Uncomment the data set you want to see, else it defaults on an example
