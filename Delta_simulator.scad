@@ -6,7 +6,7 @@
 
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. 
 // OpenScad official version 2015.03 have a lot of flickering during animation. This is corrected in the development snapshots, which I recommended to use.  
-// Licence GPL V2.0 - Pierre ROUZEAU aka PRZ - 
+// Licence GPLv2 or any later version - Pierre ROUZEAU aka PRZ - 
 // version 0.4.4 - 5 July 2015
 // 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
 // 29 may 2015 - added internal comments to explain use. Frame order build modified for transparent panels
@@ -440,7 +440,7 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     ""
   ];
   vtext1 = $dtxt? concat (vtext0,$dtxt):vtext0; //add dataset text, if any - shall be an array
-  vtext = concat (vtext1,"", "program License: GPL V2.0 - Author: PRZ");
+  vtext = concat (vtext1,"", "program License:GPLv2 or any later version-Author:PRZ");
   ltxt = len(vtext);
   rot (0,-10,angz) {
     color ("white") // panel for writing
