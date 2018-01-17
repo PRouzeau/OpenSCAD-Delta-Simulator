@@ -4,6 +4,8 @@ Display parameters on screen
 dataset independant files for existing or projected printers
 Possibility to make a film
 
+![Simulation view](Delta_simulator.png?raw=true "Simulation view")
+
 predefined dataset for simulation of :
 - Kossel
 - Rostock max
