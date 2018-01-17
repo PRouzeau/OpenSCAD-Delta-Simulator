@@ -1,10 +1,10 @@
 # OpenSCAD-Delta-Simulator
-Simulate cinematic of a delta robot (3D printer or CNC) - animation
-Display parameters on screen
-dataset independant files for existing or projected printers
-Possibility to make a film
-
-![Simulation view](Delta_simulator.png?raw=true "Simulation view")
+Simulate cinematic of a delta robot (3D printer or CNC) - animation<br>
+Display parameters on screen<br>
+dataset independant files for existing or projected printers<br>
+Possibility to make a film<br>
+<br>
+<img src="Delta_simulator.png" width="520">
 
 predefined dataset for simulation of :
 - Kossel
