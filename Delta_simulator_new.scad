@@ -1,32 +1,37 @@
 // Parallel columns delta robot simulator, extracted from my Delta printer design.
 // This simulator could emulate any delta travels, provided the parameters are accurate.
-// Needs AT LEAST OpenScad 2017.11.12 snapshot (snapshot with customizer, bugs removed)
-// Note that there is a nasty bug (#1892) in Windows in this snapshot which drive to update the font cache at every start-up. Delete directories  C:\Users[User]\AppData\Local\fontconfig (GUI) and C:\Windows\System32\config\systemprofile\AppData\Local\fontconfig (CLI) to get rid of this bug (font cache will update once after the delete).
-// Customizer is required in this new simulator revision (Snapshot of Nov 2017)
+// Needs AT LEAST OpenScad 2018.04.06 snapshot (snapshot with customizer, nearly all bugs removed, better presentation)
+// Note that there is a nasty bug (#1892) https://github.com/openscad/openscad/issues/1892 which may drive to update the font cache at every start-up. If it occurs on Windows Delete directories  C:\Users[User]\AppData\Local\fontconfig (GUI) and C:\Windows\System32\config\systemprofile\AppData\Local\fontconfig (CLI) to get rid of this bug (font cache will update once after the delete).
+// Customizer is required in this new simulator revision (Snapshot of April 2018)
 // Customizer is experimental feature, so you need to select:
 // Menu [Edit][Preferences][Features], tick [Customizer]
 // Menu [View] Untick [Hide customizer]
-
+// Customizer interface is nicer if you select 'description only' in customizer panel (after 'F5' run)
+// There is a bunch of preset data which when selected in Customizer simulates known and prospective 3D printers geometries.
 // You need to run [F5] BEFORE selecting a dataset
+// Note that a dataset only modify recorded data, so a dataset if not incorporating all datas (which can be done by editing the json file) can be used as a modifier only and not necessarily a complete set. 
 
 // Play with it! you won't broke anything.
 // To run the animation click [View][Animate],a panel open in the bottom right of your screen. Set 10~25 in the FPS fied and 360 in the field 'Steps'. A lower number will make larger steps. You can manipulate the view during animation. You need to stop the animation to change a parameter (including animation movement). For that set 0 in 'Steps' field.
 
-// Licence GPLv2 or any later version - Pierre ROUZEAU aka PRZ - 
-// version 0.5 - 29 Jan 2017 - restructured to use customizer and datasets
-// 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
-// 29 may 2015 - added internal comments to explain use. Frame order build modified for transparent panels
-// June - allow more personalisation - review fan, spool - allow dataset text lines
-// 12 June: 'square Delta'
-// end june - correct data sets broken by the revision 0.4.3
-//  5 July 15: atan2 function simplify polar transformation
-// 13 Oct 15: add Delta-six dataset by sage (dataset written by geodave810). explanation of personalisation 
-// 21 dec 15: add effector stability coefficient - see drawing and text
-//  January 2017: Adaptation to customizer - data sets in Json format
-//  Nov 2017: Update customizer  
-// set below variable to false if you want to do a closeup view during animation
+//Making a closeup during animation needs deactivation of imposing camera view variable (group 'Camera view' in customizer else see below)
 
-/*[Camera view] ---------------------------- */
+// Licence GPLv2 or any later version - Pierre ROUZEAU aka PRZ - 
+// version 0.7 - 2 May 2018 - update on instruction about customizer use. Renamed file.
+//  Nov 2017: Update customizer  
+// version 0.5 - 29 Jan 2017 - restructured to use customizer and datasets
+// 21 dec 15: add effector stability coefficient - see drawing and text
+// 13 Oct 15: add Delta-six dataset by sage (dataset written by geodave810). explanation of personalisation 
+// 29 may 2015 - added internal comments to explain use. Frame order build modified for transparent panels
+// 25 May 2015 - add twin rods in addition of extrusion - display bot name - modifs for micros deltas (Fisher delta and Micro Delta) - allow user part build for effector, corners and carriage.
+//  5 July 15: atan2 function simplify polar transformation
+// end june - correct data sets broken by the revision 0.4.3
+// 12 June: 'square Delta'
+// June - allow more personalisation - review fan, spool - allow dataset text lines
+
+// set campos variable to false if you want to do a closeup view during animation. That can be done in customizer
+
+/*[Camera view] ------------------------- */
 //Impose camera position
 camPos = true;
 Camera_distance = 2000;
@@ -34,7 +39,6 @@ Camera_distance = 2000;
 camVpr = [80,0,42];
 //Camera translation vector
 camVpt = [215,-90,400];
-
 
 //dimensions are in mm.
 /*[General] --------------------------------- */
@@ -180,7 +184,7 @@ railrot = -30;
 frame_rot = 30; 
 bed_clr=bed_color/256; // matrix calculation ?? 
 
-//--- Text display ---------------------------
+//--- Text display ------------------------
 txtxdist = 0;
 txtsize = beam_int_radius/16;
 txtxpos = (txtxdist)?txtxdist:0.8*beam_int_radius;
