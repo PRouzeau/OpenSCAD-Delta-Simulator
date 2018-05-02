@@ -20,6 +20,10 @@ car_hor_offset=28;
 belt_dist=12;
 spool_diam = 0; // no spool shown
 
-$vpr=camPos?[80,0,15]:undef; // camera rotation
-$vpt=camPos?[140,-90,400]:undef; //camera translation  */
+camVpd = 2000;  // camera distance
+camVpr = [80,0,15]; // Camera rotation vector
+camVpt = [140,-90,400]; //camera translation  */
+
 txtangle = -85;
+
+

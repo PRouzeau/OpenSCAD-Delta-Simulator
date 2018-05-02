@@ -27,9 +27,9 @@ mini_angle = 31.5;
 hotend_vert_dist = 12;
 dia_ball= 5;
 dia_arm = 4;
-railthk =0; 
-railwidth =0; 
-rail_base=0;
+Rail_thickness = 0; 
+Rail_width = 0; 
+Rail_base_height = 0;
 frame_corner_radius=10; 
 frame_face_radius= 0;
 corner_offset=0;
@@ -38,9 +38,10 @@ belt_dist= 1;
 spool_diam = 0;  
 spool_thk = 70;   
 
-$vpd=camPos?1500:$vpd;   // camera distance: work only if set outside a module
-$vpr=camPos?[80,0,42]:$vpr;   // camera rotation
-$vpt=camPos?[152,-90,300]:$vpt; //camera translation  */
+camVpd = 1500;  // camera distance
+camVpr = [80,0,42]; // Camera rotation vector
+camVpt = [152,-90,300]; //camera translation  */
+
 
 //cylz (265,10,0,0,0,128);
   

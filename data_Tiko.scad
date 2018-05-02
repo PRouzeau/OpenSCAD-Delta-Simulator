@@ -1,5 +1,6 @@
 // Data Set for Tiko Delta printer - get from published photos and data
 Delta_name = "Tiko by Tiko3D"; // 6 April 2015
+//Jan 2017 - adapt to customizer
 housing_base=125; //uncomment this line to show the housing
 housing_opening = 350;
 beam_int_radius = 115.5; // radius inside the columns - used as reference radius
@@ -25,7 +26,9 @@ mini_angle = 35.3; // unusually high because the rail bottom extension not possi
 hotend_vert_dist = 10;
 dia_ball= 3.6;
 dia_arm = 5;
-railthk =8; railwidth =20; rail_base=127;
+Rail_thickness =8; 
+Rail_width =20; 
+Rail_base_height=127;
 frame_corner_radius=60; 
 corner_offset=-57;
 frame_face_radius= 0;
@@ -33,7 +36,7 @@ frame_face_radius= 0;
 belt_dist=0;
 spool_diam = 175;  spool_thk = -60;  
 
-if (camPos) {
-  $vpd=1400; // camera distance
-  $vpt=[152,-90,300]; //camera translation  */
-}  
+camVpd = 1400;  // camera distance
+camVpr = [80,0,42]; // Camera rotation vector
+camVpt = [152,-90,300]; //camera translation  */
+  

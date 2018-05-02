@@ -38,9 +38,9 @@ mini_angle = 20; // - same diameter but more usable - gives height 154/173  */
 hotend_vert_dist = 16.5;
 dia_ball= 6;
 dia_arm = 10;
-railthk =0; 
-railwidth =0; 
-rail_base=0;
+Rail_width =0; 
+Rail_thickness =0;
+Rail_base_height =0;
 frame_corner_radius=11; 
 frame_face_radius= 0;
 corner_offset=0;
@@ -54,9 +54,9 @@ struct_color = "green";
 moving_color = "green";
 bed_color = "silver";
 
-$vpd=camPos?1500:$vpd;   // camera distance: work only if set outside a module
-$vpr=camPos?[80,0,42]:$vpr;   // camera rotation
-$vpt=camPos?[190,-67,290]:$vpt; //camera translation  */
+camVpd = 1500;  // camera distance
+camVpr = [80,0,42]; // Camera rotation vector
+camVpt = [190,-67,290]; //camera translation  */
 
 //*
 $bCar=true; // allow the program to use below module instead of standard carriage
