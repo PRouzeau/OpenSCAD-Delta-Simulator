@@ -13,3 +13,8 @@ predefined dataset for simulation of :
 - Tiko
 
 and other printers
+
+To install OpenSCAD applications, see http://rouzeau.net/Print3D/OpenSCADApplications
+
+Pour installer les applications OpenSCAD, voir  http://rouzeau.net/OpenSCAD/Applications
+
