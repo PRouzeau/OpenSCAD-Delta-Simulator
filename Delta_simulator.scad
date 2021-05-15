@@ -16,7 +16,7 @@
 
 //Making a closeup during animation needs deactivation of imposing camera view variable (group 'Camera view' in customizer else see below)
 
-// Licence GPLv2 or any later version - Pierre ROUZEAU aka PRZ - 
+// Licence GPLv3 or any later version - Pierre ROUZEAU aka PRZ - 
 // version 0.7 - 2 May 2018 - update on instruction about customizer use. Renamed file.
 //  Nov 2017: Update customizer  
 // version 0.5 - 29 Jan 2017 - restructured to use customizer and datasets
@@ -28,12 +28,15 @@
 // end june - correct data sets broken by the revision 0.4.3
 // 12 June: 'square Delta'
 // June - allow more personalisation - review fan, spool - allow dataset text lines
-
-// set campos variable to false if you want to do a closeup view during animation. That can be done in customizer
+//May 2021 - Remove OpenSCAD warning - clean the directory - update GPL licence revision
+/*[Hidden]*/
+//Indicate that the program just started (to impose camera position)
+pstart = $vpr==[55,0,25];
 
 /*[Camera view] ------------------------- */
-//Impose camera position
-camPos = true;
+//Impose camera position (unflag once done)
+camPos= false;
+//Camera distance
 Camera_distance = 2000;
 //Camera rotation vector
 camVpr = [80,0,42];
@@ -41,7 +44,7 @@ camVpr = [80,0,42];
 camVpt = [215,-90,400];
 
 //dimensions are in mm.
-/*[General] --------------------------------- */
+/*[General] ----------------------------- */
 Delta_name = "Simulator example";
 Delta_site = "";
 Structure_color = "Red"; //["Red", "Magenta", "Green", "Lime", "Blue", "DeepSkyBlue", "BlueViolet", "Gold", "Orange"]
@@ -203,9 +206,9 @@ $fn=32; // smooth the cylinders
 
 //$t=0.8377;
 
-$vpd=camPos?Camera_distance:undef;      // camera distance: work only if set outside a module
-$vpr=camPos?camVpr:undef; // camera rotation
-$vpt=camPos?camVpt:undef; //camera translation  
+$vpd=(camPos||pstart)?Camera_distance:$vpd;      // camera distance: work only if set outside a module
+$vpr=(camPos||pstart)?camVpr:$vpr; // camera rotation
+$vpt=(camPos||pstart)?camVpt:$vpt; //camera translation  
 
 //-- imposing effector position (if defined, this will supersedes the animation equation)
 // note that structure is rotated 30°, so x and y are rotated accordingly.
@@ -463,9 +466,9 @@ extrusion_w = (Extrusion_width)?Extrusion_width:extrusion;
               cylz (extrusion,htotal, beam_int_radius,rod_space/2);
           else  
             cubez(extrusion, extrusion_w, htotal, beam_int_radius+extrusion/2); 
-      if (belt_dist||$bdist) {
-        bd = $bdist ? $bdist:belt_dist;
-        ht = $ht_tens?$ht_tens-25:25; // if tensioner at the bottom
+      if (belt_dist||!is_undef($bdist)) {
+        bd = !is_undef($bdist) ? $bdist:belt_dist;
+        ht = !is_undef($ht_tens)?$ht_tens-25:25; // if tensioner at the bottom
         color("black")
           cubez (6,14,htotal-ht-40,  beam_int_radius-bd+3,0,ht); 
       }  
@@ -475,11 +478,11 @@ extrusion_w = (Extrusion_width)?Extrusion_width:extrusion;
       color(bed_clr) 
         cylz (bed_dia,-3,0,0,hbase+bed_level,80);
   // spool
-    sprot = $spool_rot? $spool_rot:[0,0,0];  
-    sptsl = $spool_tsl? $spool_tsl:[0,0,htotal+Spool_width/10];    
+    sprot = !is_undef($spool_rot)? $spool_rot:[0,0,0];  
+    sptsl = !is_undef($spool_tsl)? $spool_tsl:[0,0,htotal+Spool_width/10];    
     if(spool_diam)
       rotate (sprot) translate (sptsl) spool();
-    if ($bSide) buildSides(); // allow specific sides to be built - at the end if transparent    
+    if (!is_undef($bSide)) buildSides(); // allow specific sides to be built - at the end if transparent    
   }  
 }
 
@@ -532,15 +535,15 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
     str("Effector plane/hotend distance:",round(hotend_vert_dist+eff_vert_dist)," mm"),
     ""
   ];
-  vtext1 = $dtxt? concat (vtext0,$dtxt):vtext0; //add dataset text, if any - shall be an array
-  vtext = concat (vtext1,"", "Program License:GPLv2 or any later version","Author:PRZ - Pierre ROUZEAU");
+  vtext1 = !is_undef($dtxt)? concat (vtext0,$dtxt):vtext0; //add dataset text, if any - shall be an array
+  vtext = concat (vtext1,"", "Program License:GPLv3 or any later version","Author:PRZ - Pierre ROUZEAU");
   ltxt = len(vtext);
   rot (0,-10,angz) {
-    color ("white") // panel for writing
-      tsl (xpos, ypos-txtsize, zpos-(ltxt+0.8)*1.5*txtsize) 
-        cube ([1,24.5*txtsize,(ltxt+2)*1.5*txtsize]); 
-    color ("black") { // the writing on the wall
-      for (i=[0:ltxt-1]) {
+    color("white") // panel for writing
+      tsl(xpos, ypos-txtsize, zpos-(ltxt+0.8)*1.5*txtsize) 
+        cube([1,24.5*txtsize,(ltxt+2)*1.5*txtsize]); 
+    color("black") { // the writing on the wall
+      for(i=[0:ltxt-1]) {
         txs=(i>=ltxt-2)?txtsize*0.8:txtsize; // 2 last line smaller size (license)
         tsl (xpos, ypos, zpos-1.5*txtsize*i)
           rot (90,0,90)
@@ -550,8 +553,8 @@ module disp_text(angz,xpos,ypos,zpos) { // display printer data on a panel
   }
 } 
 
-//== LIBRARY (extract from the Z_utility library) =======
-//-- Operators ------------------------------------------
+//== LIBRARY (extract from the Z_utility library) ==
+//-- Operators -----------------------------
 //rotation and translations without brackets - 
 module rot (x,y=0,z=0) {rotate([x,y,z]) children();}
 module rotz (z) {rotate([0,0,z]) children();}
@@ -596,7 +599,7 @@ module dmirrorz() { // duplicate and mirror on z axis
   mirror ([0,0,1]) children();
 }
 
-//-- Primitives -----------------------------------------
+//-- Primitives ------------------------------
 module textz(txt,size,h,bold) { // position text normal to z axis
   st=(bold)? "Liberation Sans:style=Bold":"Liberation Sans";
   linear_extrude(height = h) 
@@ -680,7 +683,7 @@ module hexagon (corner_radius, axis_space, axisf_radius,coffset,choffset, h,hpos
   }
 }
 
-//-- Miscellaneous --------------------------------------
+//-- Miscellaneous ---------------------------
 module build_fan(size=40, thk=6) { //~ok for 25,30,40,60,80,120. Not ok for 92
   holesp = size==120?52.5:size==80?35.75:size==60?25:0.4*size;
   color ("black") {

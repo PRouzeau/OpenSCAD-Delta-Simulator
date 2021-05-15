@@ -1,6 +1,6 @@
-//Specific modules for extending delta simulation
-//This is new for use of customizer, as customizer cannot load specific files, so all extensions shall be loaded every time.
-//By example, you could use these modules to load stl files
+//Specific modules for extending delta simulation and program yourself your own delta parts
+//This is new for use of customizer, as customizer cannot load specific files, so all extensions including this one shall be loaded every time.
+//By example, you could use these modules to load existing stl files of a given printer
 // PRZ Jan 2017, Licence: see Delta_simulator.scad
 
 // Display carriage
